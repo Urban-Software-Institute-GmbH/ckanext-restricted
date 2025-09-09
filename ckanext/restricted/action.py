@@ -5,7 +5,6 @@ import ckan.authz as authz
 from ckan.common import _
 import ckan.lib.base as base
 
-from ckan.lib.base import render_jinja2
 from ckan.lib.mailer import mail_recipient
 from ckan.lib.mailer import MailerException
 import ckan.logic
@@ -18,7 +17,6 @@ from ckan.logic import side_effect_free
 from ckanext.restricted import auth
 from ckanext.restricted import logic
 import json
-import copy
 from ckan.common import config
 
 from logging import getLogger
