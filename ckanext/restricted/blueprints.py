@@ -43,13 +43,12 @@ def get_blueprints(name, module):
 
 def restricted_request_access_form(package_id, resource_id, data=None, errors=None, error_summary=None):
     """Redirects to form."""
-    try:
-        context = {'model': model, "session": model.Session,
-                   'user': g.user,
-                   'auth_user_obj': base.c.userobj}
-        logic.check_access('site_read', context)
-    except logic.NotAuthorized:
-        base.abort(401, _('Not authorized to see this page'))
+    user_obj = model.User.get(g.user) if g.user else None
+    context = {'model': model, "session": model.Session,
+               'user': g.user,
+               'auth_user_obj': user_obj}
+    if not g.user:
+        toolkit.abort(401, _('Not authorized to see this page'))
 
     user_id = g.user
     if not user_id:

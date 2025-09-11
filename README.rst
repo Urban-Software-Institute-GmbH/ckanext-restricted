@@ -2,32 +2,6 @@
    these badges work. The necessary Travis and Coverage config files have been
    generated for you.
 
-.. image:: https://travis-ci.org/espona/ckanext-restricted.svg?branch=master
-    :target: https://travis-ci.org/espona/ckanext-restricted
-
-.. image:: https://coveralls.io/repos/espona/ckanext-restricted/badge.svg
-  :target: https://coveralls.io/r/espona/ckanext-restricted
-
-.. image:: https://img.shields.io/pypi/dm/ckanext-restricted.svg
-    :target: https://pypi.python.org/pypi//ckanext-restricted/
-    :alt: Downloads
-
-.. image:: https://img.shields.io/pypi/v/ckanext-restricted.svg
-    :target: https://pypi.python.org/pypi/ckanext-restricted/
-    :alt: Latest Version
-
-.. image:: https://img.shields.io/pypi/pyversions/ckanext-restricted.svg
-    :target: https://pypi.python.org/pypi/ckanext-restricted/
-    :alt: Supported Python versions
-
-.. image:: https://img.shields.io/pypi/status/ckanext-restricted.svg
-    :target: https://pypi.python.org/pypi/ckanext-restricted/
-    :alt: Development Status
-
-.. image:: https://img.shields.io/pypi/l/ckanext-restricted.svg
-    :target: https://pypi.python.org/pypi/ckanext-restricted/
-    :alt: License
-
 =============
 ckanext-restricted
 =============
@@ -37,12 +11,12 @@ ckanext-restricted
    Consider including some screenshots or embedding a video!
 
 CKAN extension to restrict the accessibility to the resources of a dataset.
-This way the package metadata is accesible but not the data itself (resource). 
-The resource access restriction level can be individualy defined for every package.
+This way the package metadata is accessible but not the data itself (resource).
+The resource access restriction level can be individually defined for every package.
 
 Users can request access to a dataset by pressing a button and filling up a simple form. The package owner can
 allow individual users to access the resource. If the users allowed individually 
-will be notified by mail. It also includes notifying by mail on every new user registration that can be disabled (expained later in this document). The mails are generated from templates that can be extended.
+will be notified by mail. It also includes notifying by mail on every new user registration that can be disabled (explained later in this document). The mails are generated from templates that can be extended.
 
 All information inside the restricted fields (except 'level') is hidden for users other than the ones who can edit the dataset. We used this to keep a shared-secret key field for accessing remotely hosted resources (https://github.com/EnviDat/ckanext-envidat_theme/blob/4265ecfe90e10eb1f095e8e8d19fe43554ab6799/ckanext/envidat_theme/helpers.py#L28). 
 The allowed usernames are hidden partially to the non-editors, in our case was critical because they were very similar to the user emails (https://github.com/EnviDat/ckanext-restricted/blob/2d7b2915ef50249fe8d9ec43ceaf532918506539/ckanext/restricted/action.py#L153).
@@ -75,7 +49,7 @@ restricted_resources_preview.PNG
 Requirements
 ------------
 
-This extension has been oruginally developed for CKAN version 2.5.2 and is compatible up to 2.8.x.
+This extension has been originally developed for CKAN version 2.5.2 and is compatible up to 2.11.x.
 
 Requires the following extensions:
 * ckanext-scheming
@@ -84,7 +58,7 @@ Requires the following extensions:
 
 YOu can find an alternative without scheming here https://github.com/olivierdalang/ckanext-restricted/commit/89693f5e4a2a4dedf2cada289d1bf46bd7991069 
 
-The resource access restriction level can be individualy defined for every package. This requires adding an extra field to package metadata with (some of) the possible values: "public",  "registered", "any_organization",  "same_organization" (as the package).
+The resource access restriction level can be individually defined for every package. This requires adding an extra field to package metadata with (some of) the possible values: "public",  "registered", "any_organization",  "same_organization" (as the package).
 
 The allowed user list is also defined in an additional field that includes autocomplete.
 
@@ -223,7 +197,7 @@ coverage installed in your virtualenv (``pip install coverage``) then run::
 Registering ckanext-restricted on PyPI
 ---------------------------------
 
-ckanext-restricted should be availabe on PyPI as
+ckanext-restricted should be available on PyPI as
 https://pypi.python.org/pypi/ckanext-restricted. If that link doesn't work, then
 you can register the project on PyPI for the first time by following these
 steps:
@@ -252,7 +226,7 @@ steps:
 Releasing a New Version of ckanext-restricted
 ----------------------------------------
 
-ckanext-restricted is availabe on PyPI as https://pypi.python.org/pypi/ckanext-restricted.
+ckanext-restricted is available on PyPI as https://pypi.python.org/pypi/ckanext-restricted.
 To publish a new version to PyPI follow these steps:
 
 1. Update the version number in the ``setup.py`` file.

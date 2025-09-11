@@ -22,7 +22,10 @@ def restricted_get_username_from_context(context):
     auth_user_obj = context.get('auth_user_obj', None)
     user_name = ''
     if auth_user_obj:
-        user_name = auth_user_obj.as_dict().get('name', '')
+        if hasattr(auth_user_obj, 'as_dict'):
+            user_name = auth_user_obj.as_dict().get('name', '')
+        else:
+            user_name = ''
     else:
         if authz.get_user_id_for_username(context.get('user'), allow_none=True):
             user_name = context.get('user', '')
