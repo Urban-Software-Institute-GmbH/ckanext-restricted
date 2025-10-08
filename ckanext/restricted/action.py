@@ -135,8 +135,12 @@ def restricted_package_search(context, data_dict):
         if key == 'results':
             restricted_package_search_result_list = []
             for package in value:
-                restricted_package_search_result_list.append(
-                    restricted_package_show(package_show_context, {'id': package.get('id')}))
+                try:
+                    restricted_package_search_result_list.append(
+                        restricted_package_show(package_show_context, {'id': package.get('id')}))
+                except NotFound:
+                    log.debug(f"id not found in DB but exists in Solr: {package.get('id')}")
+                    continue #package no longer exist in DB
             restricted_package_search_result[key] = \
                 restricted_package_search_result_list
         else:
