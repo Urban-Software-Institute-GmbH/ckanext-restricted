@@ -1,0 +1,35 @@
+{
+  "dataset_type": "dataset",
+  "about": "Minimal schema adding resource restriction field",
+  "dataset_fields": [],
+  "resource_fields": [
+    {
+      "field_name": "restricted",
+      "label": "Access Restriction",
+      "preset": "composite",
+      "subfields": [
+        {
+          "field_name": "level",
+          "label": "Restriction Level",
+          "preset": "select",
+          "form_include_blank_choice": false,
+          "choices": [
+            { "value": "public", "label": "Public" },
+            { "value": "registered", "label": "Registered users" },
+            { "value": "only_allowed_users", "label": "Only allowed users" },
+            { "value": "any_organization", "label": "Any organization member" },
+            {
+              "value": "same_organization",
+              "label": "Same organization member"
+            }
+          ]
+        },
+        {
+          "field_name": "allowed_users",
+          "label": "Allowed Users",
+          "preset": "user_autocomplete"
+        }
+      ]
+    }
+  ]
+}
