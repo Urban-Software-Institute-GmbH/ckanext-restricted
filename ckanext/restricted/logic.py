@@ -33,49 +33,74 @@ def restricted_get_username_from_context(context):
 
 
 def restricted_get_restricted_dict(resource_dict):
-    log.info(
-  "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted_field=%r type=%s",
-      resource_dict.get("restricted", None),
-      type(resource_dict.get("restricted", None)).__name__,
-     )
+    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ENTER restricted_get_restricted_dict")
 
-    log.info(
-    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW extras.restricted=%r type=%s",
-    resource_dict.get("extras", {}).get("restricted", None),
-    type(resource_dict.get("extras", {}).get("restricted", None)).__name__,
-    )
     restricted_dict = {'level': 'public', 'allowed_users': []}
 
-    
+    if not resource_dict:
+        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 resource_dict is empty -> default public")
+        return restricted_dict
 
-    # the ckan plugins ckanext-scheming and ckanext-composite
-    # change the structure of the resource dict and the nature of how
-    # to access our restricted field values
-    if resource_dict:
-        # the dict might exist as a child inside the extras dict
-        extras = resource_dict.get('extras', {})
-        # or the dict might exist as a direct descendant of the resource dict
-        restricted = resource_dict.get('restricted', extras.get('restricted', {}))
+    extras = resource_dict.get('extras', {}) or {}
+
+    log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW keys=%r",
+        list(resource_dict.keys())
+    )
+
+    log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted=%r",
+        resource_dict.get('restricted')
+    )
+
+    log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW extras.restricted=%r",
+        extras.get('restricted')
+    )
+
+    log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted-level=%r",
+        resource_dict.get('restricted-level')
+    )
+
+    log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted-allowed_users=%r",
+        resource_dict.get('restricted-allowed_users')
+    )
+
+    # Try structured restricted first
+    restricted = resource_dict.get('restricted', extras.get('restricted'))
+
+    if restricted:
+        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 FOUND structured restricted")
         if not isinstance(restricted, dict):
-            # if the restricted property does exist, but not as a dict,
-            # we may need to parse it as a JSON string to gain access to the values.
-            # as is the case when making composite fields
             try:
                 restricted = json.loads(restricted)
-                
-            except ValueError:
+                log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 JSON parsed restricted=%r", restricted)
+            except Exception:
+                log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 JSON parse failed")
                 restricted = {}
 
-        if restricted:
-            restricted_level = restricted.get('level', 'public')
-            allowed_users = restricted.get('allowed_users', '')
-            if not isinstance(allowed_users, list):
-                allowed_users = allowed_users.split(',')
-            restricted_dict = {
-                'level': restricted_level,
-                'allowed_users': allowed_users}
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 PARSED restricted_dict=%r",
-         restricted_dict)
+        if isinstance(restricted, dict):
+            level = restricted.get('level', 'public')
+            allowed = restricted.get('allowed_users', '')
+            allowed_list = [u.strip() for u in str(allowed).split(',') if u.strip()]
+            result = {'level': level, 'allowed_users': allowed_list}
+            log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RETURN structured=%r", result)
+            return result
+
+    # Try flattened fields
+    flat_level = resource_dict.get('restricted-level')
+    flat_users = resource_dict.get('restricted-allowed_users')
+
+    if flat_level or flat_users:
+        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 FOUND flattened restricted")
+        allowed_list = [u.strip() for u in str(flat_users or '').split(',') if u.strip()]
+        result = {'level': flat_level or 'public', 'allowed_users': allowed_list}
+        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RETURN flattened=%r", result)
+        return result
+
+    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RETURN default public")
     return restricted_dict
 
 
