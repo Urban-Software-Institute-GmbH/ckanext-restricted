@@ -191,42 +191,41 @@ def restricted_check_access(context, data_dict):
 
 def _restricted_resource_list_hide_fields(context, resource_list):
     log.info(
-    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS START user=%r resources_count=%d",
-    context.get("user"),
-    len(resource_list), 
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS START user=%r resources_count=%d",
+        context.get("user"),
+        len(resource_list),
     )
-    log.info(
-    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS user=%r resource_id=%r package_id=%r",
-    context.get("user"),
-    resource.get("id"),
-    resource.get("package_id"),
-    )
+
     restricted_resources_list = []
+
     for resource in resource_list:
         # copy original resource
         restricted_resource = dict(resource)
 
-        # get the restricted fields
+        log.info(
+            "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS LOOP resource_id=%r package_id=%r",
+            restricted_resource.get("id"),
+            restricted_resource.get("package_id"),
+        )
+
+        # get the restricted fields (this now supports structured + flattened)
         restricted_dict = logic.restricted_get_restricted_dict(restricted_resource)
 
-        # hide fields to unauthorized users
+        log.info(
+            "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS restricted_dict=%r",
+            restricted_dict,
+        )
+
+        # check authorization
         authorized = auth.restricted_resource_show(
             context, {'id': resource.get('id'), 'resource': resource}
-            ).get('success', False)
+        ).get('success', False)
+
         log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS authorized=%r resource_id=%r",
-        authorized,
-        resource.get("id"),
+            "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS authorized=%r resource_id=%r",
+            authorized,
+            restricted_resource.get("id"),
         )
-        
-        if not authorized:
-            # Hide download URL for unauthorized users
-            restricted_resource['url'] = ''
-            restricted_resource['access_url'] = ''
-            restricted_resource['download_url'] = ''
-            # Also hide datastore/filestore hints if present
-            restricted_resource['datastore_active'] = False
-            restricted_resource['has_views'] = False
 
         # hide other fields in restricted to everyone but dataset owner(s)
         if not authz.is_authorized(
@@ -247,17 +246,21 @@ def _restricted_resource_list_hide_fields(context, resource_list):
             new_restricted = json.dumps({
                 'level': restricted_dict.get("level"),
                 'allowed_users': ','.join(allowed_users)})
+
             extras_restricted = resource.get('extras', {}).get('restricted', {})
-            if (extras_restricted):
+            if extras_restricted:
+                restricted_resource.setdefault('extras', {})
                 restricted_resource['extras']['restricted'] = new_restricted
 
             field_restricted_field = resource.get('restricted', {})
-            if (field_restricted_field):
+            if field_restricted_field:
                 restricted_resource['restricted'] = new_restricted
 
-        restricted_resources_list += [restricted_resource]
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS resource_id=%s",
-         resource.get("id"))
+        restricted_resources_list.append(restricted_resource)
 
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 authorized=%r", authorized)
+    log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS END returned_count=%d",
+        len(restricted_resources_list),
+    )
+
     return restricted_resources_list
