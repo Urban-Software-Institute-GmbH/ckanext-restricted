@@ -33,6 +33,17 @@ def restricted_get_username_from_context(context):
 
 
 def restricted_get_restricted_dict(resource_dict):
+    log.info(
+  "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted_field=%r type=%s",
+      resource_dict.get("restricted", None),
+      type(resource_dict.get("restricted", None)).__name__,
+     )
+
+    log.info(
+    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW extras.restricted=%r type=%s",
+    resource_dict.get("extras", {}).get("restricted", None),
+    type(resource_dict.get("extras", {}).get("restricted", None)).__name__,
+    )
     restricted_dict = {'level': 'public', 'allowed_users': []}
 
     
