@@ -90,8 +90,8 @@ def restricted_get_restricted_dict(resource_dict):
             return result
 
     # Try flattened fields
-    flat_level = resource_dict.get('restricted-level')
-    flat_users = resource_dict.get('restricted-allowed_users')
+    flat_level = resource_dict.get('restricted-level') or extras.get('restricted-level')
+    flat_users = resource_dict.get('restricted-allowed_users') or extras.get('restricted-allowed_users')
 
     if flat_level or flat_users:
         log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 FOUND flattened restricted")
