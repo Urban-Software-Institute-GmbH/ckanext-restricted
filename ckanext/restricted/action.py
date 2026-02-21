@@ -194,7 +194,15 @@ def _restricted_resource_list_hide_fields(context, resource_list):
         authorized = auth.restricted_resource_show(
             context, {'id': resource.get('id'), 'resource': resource}
             ).get('success', False)
-
+#### added code by me #####
+        if not authorized:
+            # Hide download URL for unauthorized users
+            restricted_resource['url'] = ''
+            restricted_resource['access_url'] = ''
+            restricted_resource['download_url'] = ''
+            # Also hide datastore/filestore hints if present
+            restricted_resource['datastore_active'] = False
+            restricted_resource['has_views'] = False
         # hide other fields in restricted to everyone but dataset owner(s)
         if not authz.is_authorized(
                 'package_update', context, {'id': resource.get('package_id')}
