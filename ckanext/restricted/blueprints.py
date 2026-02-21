@@ -42,6 +42,8 @@ def get_blueprints(name, module):
 
 
 def restricted_request_access_form(package_id, resource_id, data=None, errors=None, error_summary=None):
+    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 REQUEST_ACCESS user=%r package=%s resource=%s",
+         g.user, package_id, resource_id)
     """Redirects to form."""
     user_obj = model.User.get(g.user) if g.user else None
     context = {'model': model, "session": model.Session,

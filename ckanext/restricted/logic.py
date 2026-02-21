@@ -35,6 +35,8 @@ def restricted_get_username_from_context(context):
 def restricted_get_restricted_dict(resource_dict):
     restricted_dict = {'level': 'public', 'allowed_users': []}
 
+    
+
     # the ckan plugins ckanext-scheming and ckanext-composite
     # change the structure of the resource dict and the nature of how
     # to access our restricted field values
@@ -49,6 +51,7 @@ def restricted_get_restricted_dict(resource_dict):
             # as is the case when making composite fields
             try:
                 restricted = json.loads(restricted)
+                
             except ValueError:
                 restricted = {}
 
@@ -60,7 +63,8 @@ def restricted_get_restricted_dict(resource_dict):
             restricted_dict = {
                 'level': restricted_level,
                 'allowed_users': allowed_users}
-
+    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 PARSED restricted_dict=%r",
+         restricted_dict)
     return restricted_dict
 
 
@@ -118,7 +122,13 @@ def restricted_check_user_resource_access(user, resource_dict, package_dict):
     if restricted_level == 'same_organization':
         if pkg_organization_id in user_organization_dict.keys():
             return {'success': True}
-
+    log.info(
+    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 CHECK user=%r level=%r allowed=%r owner_org=%r",
+    user,
+    restricted_level,
+    allowed_users,
+    package_dict.get("owner_org")
+    )
     return {
         'success': False,
         'msg': ('Resource access restricted to same '
