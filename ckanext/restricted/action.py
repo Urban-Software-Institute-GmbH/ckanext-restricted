@@ -190,8 +190,17 @@ def restricted_check_access(context, data_dict):
 #     return restricted_resources_list
 
 def _restricted_resource_list_hide_fields(context, resource_list):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACTION restricted_package_show user=%r id=%r",
-         context.get("user"), data_dict.get("id"))
+    log.info(
+    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS START user=%r resources_count=%d",
+    context.get("user"),
+    len(resource_list), 
+    )
+    log.info(
+    "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS user=%r resource_id=%r package_id=%r",
+    context.get("user"),
+    resource.get("id"),
+    resource.get("package_id"),
+    )
     restricted_resources_list = []
     for resource in resource_list:
         # copy original resource
@@ -204,6 +213,11 @@ def _restricted_resource_list_hide_fields(context, resource_list):
         authorized = auth.restricted_resource_show(
             context, {'id': resource.get('id'), 'resource': resource}
             ).get('success', False)
+        log.info(
+        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS authorized=%r resource_id=%r",
+        authorized,
+        resource.get("id"),
+        )
         
         if not authorized:
             # Hide download URL for unauthorized users
