@@ -1,11 +1,12 @@
 ckanext-restricted
 ==================
 
-CKAN extension to restrict access to dataset resources.
-
 .. contents:: Table of Contents
    :depth: 2
    :local:
+
+.. sectnum::
+   :depth: 2
 
 
 Forking Explained
@@ -65,6 +66,7 @@ Email notifications are supported for:
 
 All restricted fields (except ``level``) are hidden from users who do not have edit permissions.
 
+
 Screenshots
 ~~~~~~~~~~~
 
@@ -91,54 +93,6 @@ Required extensions:
 - ckanext-scheming
 - ckanext-repeating
 - ckanext-composite
-
-Alternative implementation without scheming:
-https://github.com/olivierdalang/ckanext-restricted/commit/89693f5e4a2a4dedf2cada289d1bf46bd7991069
-
-
-Example Scheming Field Definition
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: json
-
-    {
-      "field_name": "restricted",
-      "label": "Access Restriction",
-      "preset": "composite",
-      "subfields": [
-        {
-          "field_name": "level",
-          "label": "Level",
-          "preset": "select",
-          "form_include_blank_choice": false,
-          "required": true,
-          "choices": [
-            {"value": "public", "label": "Public"},
-            {"value": "registered", "label": "Registered Users"},
-            {"value": "any_organization", "label": "Any Organization Members"},
-            {"value": "same_organization", "label": "Same Organization Members"},
-            {"value": "only_allowed_users", "label": "Allowed Users Only"}
-          ]
-        },
-        {
-          "field_name": "allowed_users",
-          "label": "Allowed Users",
-          "preset": "tag_string_autocomplete"
-        }
-      ]
-    }
-
-
-reCAPTCHA Configuration
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Add the following to your CKAN config file:
-
-.. code-block:: ini
-
-    ckan.recaptcha.version = 2
-    ckan.recaptcha.privatekey = YOUR_PRIVATE_KEY
-    ckan.recaptcha.publickey = YOUR_PUBLIC_KEY
 
 
 Installation
@@ -181,40 +135,18 @@ Development Installation
 Running the Tests
 -----------------
 
-Run tests:
-
 .. code-block:: bash
 
     nosetests --nologcapture --with-pylons=test.ini
-
-Run tests with coverage:
-
-.. code-block:: bash
-
-    nosetests --nologcapture --with-pylons=test.ini \
-      --with-coverage --cover-package=ckanext.restricted \
-      --cover-inclusive --cover-erase --cover-tests
 
 
 Registering on PyPI
 -------------------
 
-Create distribution:
-
 .. code-block:: bash
 
     python setup.py sdist
-
-Register:
-
-.. code-block:: bash
-
     python setup.py register
-
-Upload:
-
-.. code-block:: bash
-
     python setup.py sdist upload
 
 
