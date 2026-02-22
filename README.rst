@@ -1,13 +1,14 @@
 ## Table of Contents
-1. [Forking Explained](#forking-explained)
-2. [ckanext-restricted](#ckanext-restricted)
-3. [Requirements](#requirements)
-4. [Installation](#installation)
-5. [Config Settings](#config-settings)
-6. [Development Installation](#development-installation)
-7. [Running the Tests](#running-the-tests)
-8. [Registering ckanext-restricted on PyPI](#registering-ckanext-restricted-on-pypi)
-9. [Releasing a New Version of ckanext-restricted](#releasing-a-new-version-of-ckanext-restricted)
+
+1. [Forking Explained](#1-forking-explained)
+2. [ckanext-restricted](#2-ckanext-restricted)
+3. [Requirements](#3-requirements)
+4. [Installation](#4-installation)
+5. [Config Settings](#5-config-settings)
+6. [Development Installation](#6-development-installation)
+7. [Running the Tests](#7-running-the-tests)
+8. [Registering ckanext-restricted on PyPI](#8-registering-ckanext-restricted-on-pypi)
+9. [Releasing a New Version of ckanext-restricted](#9-releasing-a-new-version-of-ckanext-restricted)
 
 
 
