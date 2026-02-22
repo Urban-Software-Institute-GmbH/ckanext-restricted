@@ -16,14 +16,14 @@
 
 This plugin was forked in order to adapt the code to work with the YAML schema we are using. In the original implementation, the plugin expects:
 
-```
+``
 {
   "restricted": {
     "level": "only_allowed_users",
     "allowed_users": "ckanuser7"
   }
 }
-```
+``
 
 
 or:
