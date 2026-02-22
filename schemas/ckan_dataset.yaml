@@ -68,6 +68,11 @@ dataset_fields:
   display_snippet: email.html
   display_email_name_field: maintainer
 
+- field_name: other
+  label:
+    en: Other information
+  output_validators: ignore_missing
+
 
 
 resource_fields:
