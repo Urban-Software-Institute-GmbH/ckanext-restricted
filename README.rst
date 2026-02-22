@@ -1,213 +1,176 @@
-## Table of Contents
+ckanext-restricted
+==================
 
-1. [Forking Explained](#forking-explained)
-2. [ckanext-restricted](#ckanext-restricted)
-3. [Requirements](#requirements)
-4. [Installation](#installation)
-5. [Config Settings](#config-settings)
-6. [Development Installation](#development-installation)
-7. [Running the Tests](#running-the-tests)
-8. [Registering ckanext-restricted on PyPI](#registering-ckanext-restricted-on-pypi)
-9. [Releasing a New Version of ckanext-restricted](#releasing-a-new-version-of-ckanext-restricted)
+CKAN extension to restrict access to dataset resources.
+
+.. contents:: Table of Contents
+   :depth: 2
+   :local:
 
 
+Forking Explained
+-----------------
 
-### Forking Explained
+This plugin was forked in order to adapt the code to work with the YAML schema we are using.
 
-This plugin was forked in order to adapt the code to work with the YAML schema we are using. In the original implementation, the plugin expects:
+In the original implementation, the plugin expects the restriction data to be saved like this:
 
+.. code-block:: json
 
-{
-  "restricted": {
-    "level": "only_allowed_users",
-    "allowed_users": "ckanuser7"
-  }
-}
+    {
+      "restricted": {
+        "level": "only_allowed_users",
+        "allowed_users": "ckanuser7"
+      }
+    }
 
 or:
 
-{
-  "extras": {
-    "restricted": "{\"level\":\"only_allowed_users\",\"allowed_users\":\"ckanuser7\"}"
-  }
-}
+.. code-block:: json
 
-But our Scheming YAML schema was actually saving it as:
+    {
+      "extras": {
+        "restricted": "{\"level\":\"only_allowed_users\",\"allowed_users\":\"ckanuser7\"}"
+      }
+    }
 
-{
-  "restricted-level": "only_allowed_users",
-  "restricted-allowed_users": "ckanuser7"
-}
+However, our CKAN Scheming YAML schema saves the data like this:
 
+.. code-block:: json
 
-So we adapted the plugin to fit our restricted schema.
+    {
+      "restricted-level": "only_allowed_users",
+      "restricted-allowed_users": "ckanuser7"
+    }
 
-Our schema: https://github.com/Urban-Software-Institute-GmbH/ckanext-restricted/blob/master/schemas/ckan_dataset.yaml
+Therefore, we adapted the plugin to fit our restricted schema.
 
-
-### ckanext-restricted
-
-CKAN extension to restrict the accessibility to the resources of a dataset.
-This way the package metadata is accessible but not the data itself (resource).
-The resource access restriction level can be individually defined for every package.
-
-Users can request access to a dataset by pressing a button and filling up a simple form. The package owner can
-allow individual users to access the resource. If the users allowed individually 
-will be notified by mail. It also includes notifying by mail on every new user registration that can be disabled (explained later in this document). The mails are generated from templates that can be extended.
-
-All information inside the restricted fields (except 'level') is hidden for users other than the ones who can edit the dataset. We used this to keep a shared-secret key field for accessing remotely hosted resources (https://github.com/EnviDat/ckanext-envidat_theme/blob/4265ecfe90e10eb1f095e8e8d19fe43554ab6799/ckanext/envidat_theme/helpers.py#L28). 
-The allowed usernames are hidden partially to the non-editors, in our case was critical because they were very similar to the user emails (https://github.com/EnviDat/ckanext-restricted/blob/2d7b2915ef50249fe8d9ec43ceaf532918506539/ckanext/restricted/action.py#L153).
-
-restricted_resources_metadata.PNG
-restricted_resources_preview.PNG
-
-.. figure:: restricted_resources_preview.PNG
-    :align: center
-    :alt: Package view with restricted resources
-    :figclass: align-center
-
-    Package view with restricted resources
-
-.. figure:: restricted_resources_metadata.PNG
-    :align: center
-    :alt: Resource metadata including restriction configuration
-    :figclass: align-center
-
-    Resource metadata including restriction configuration
-    
-.. figure:: restricted_resources_request_form.PNG
-    :align: center
-    :alt: Request form for restricted resources
-    :figclass: align-center
-
-    Request form for restricted resources
+Our schema:
+https://github.com/Urban-Software-Institute-GmbH/ckanext-restricted/blob/master/schemas/ckan_dataset.yaml
 
 
-### Requirements
+ckanext-restricted
+------------------
+
+This extension restricts the accessibility of dataset resources.
+
+The dataset metadata remains accessible, but the resource files can be restricted.
+
+Users can request access to a dataset by pressing a button and filling out a form. The dataset owner can then grant access to individual users.
+
+Email notifications are supported for:
+
+- Access requests
+- New user registrations (optional)
+
+All restricted fields (except ``level``) are hidden from users who do not have edit permissions.
+
+Screenshots
+~~~~~~~~~~~
+
+.. image:: restricted_resources_preview.PNG
+   :alt: Package view with restricted resources
+   :align: center
+
+.. image:: restricted_resources_metadata.PNG
+   :alt: Resource metadata including restriction configuration
+   :align: center
+
+.. image:: restricted_resources_request_form.PNG
+   :alt: Request form for restricted resources
+   :align: center
 
 
-This extension has been originally developed for CKAN version 2.5.2 and is compatible up to 2.11.x.
+Requirements
+------------
 
-Requires the following extensions:
-* ckanext-scheming
-* ckanext-repeating
-* ckanext-composite
+Originally developed for CKAN 2.5.2 and compatible up to CKAN 2.11.x.
 
-YOu can find an alternative without scheming here https://github.com/olivierdalang/ckanext-restricted/commit/89693f5e4a2a4dedf2cada289d1bf46bd7991069 
+Required extensions:
 
-The resource access restriction level can be individually defined for every package. This requires adding an extra field to package metadata with (some of) the possible values: "public",  "registered", "any_organization",  "same_organization" (as the package).
+- ckanext-scheming
+- ckanext-repeating
+- ckanext-composite
 
-The allowed user list is also defined in an additional field that includes autocomplete.
-
-If you use ckanext-scheming and ckanext-composite, this is the field definition in JSON:
-::
-     {
-     "scheming_version": 1,
-     "dataset_type": "dataset",
-     "about": "",
-     "about_url": "http://github.com/ckan/ckanext-scheming",
-     "dataset_fields": [...],
-     "resource_fields": [
-      [...]
-       {
-       "field_name": "restricted",
-       "label": "Access Restriction",
-       "preset": "composite",
-       "subfields":
-        [
-          {
-            "field_name": "level",
-            "label": "Level",
-            "preset": "select",
-            "form_include_blank_choice": false,
-            "required": true,
-            "choices": [
-              {
-                "value": "public",
-                "label": "Public"
-              },
-              {
-                "value": "registered",
-                "label": "Registered Users"
-              },
-              {
-                "value": "any_organization",
-                "label": "Any Organization Members (Trusted Users)"
-              },
-              {
-                "value": "same_organization",
-                "label": "Same Organization Members"
-               },
-               {
-                "value": "only_allowed_users",
-                "label": "Allowed Users Only"
-              }
-             ]
-           },
-            {
-            "field_name": "allowed_users",
-             "label": "Allowed Users",
-             "preset": "tag_string_autocomplete",
-             "data-module-source":"/api/2/util/user/autocomplete?q=?"
-             }
-           ]
-         }
-       ]
-     }
-
-The usage of this extension, regarding the level "any_organization", makes more sense if the CKAN administrator sets some users as members of an organization. In our case we created an organization called "trusted_users" where the mail accounts have been double checked. Therefore this extension sends a mail to the defined 'mail_to' in the CKAN config file at every new user registration. To switch off this functionality, just comment out the code at:  
-https://github.com/espona/ckanext-restricted/blob/master/ckanext/restricted/plugin.py#L14
-
-It is also recommended to set up the recaptcha in the config file
-     # Restricted
-     ckan.recaptcha.version = 2
-     ckan.recaptcha.privatekey = 6LeQxxxxxxxxxxxxxxxxxxxxxxxxdN82ojuQAgBd
-     ckan.recaptcha.publickey =  6LeQxxxxxxxxxxxxxxxxxxxxxxxxdN82ojuQAgBd
-
-The for mail notifications, the mail_to and smtp options in the ini file have to be configured. Please take a look to the following documentation: 
-
-- http://docs.ckan.org/en/latest/maintaining/configuration.html#email-settings
-- http://docs.ckan.org/en/latest/maintaining/email-notifications.html
-
- 
-### Installation
+Alternative implementation without scheming:
+https://github.com/olivierdalang/ckanext-restricted/commit/89693f5e4a2a4dedf2cada289d1bf46bd7991069
 
 
-.. Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
+Example Scheming Field Definition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To install ckanext-restricted:
+.. code-block:: json
 
-1. Activate your CKAN virtual environment, for example::
+    {
+      "field_name": "restricted",
+      "label": "Access Restriction",
+      "preset": "composite",
+      "subfields": [
+        {
+          "field_name": "level",
+          "label": "Level",
+          "preset": "select",
+          "form_include_blank_choice": false,
+          "required": true,
+          "choices": [
+            {"value": "public", "label": "Public"},
+            {"value": "registered", "label": "Registered Users"},
+            {"value": "any_organization", "label": "Any Organization Members"},
+            {"value": "same_organization", "label": "Same Organization Members"},
+            {"value": "only_allowed_users", "label": "Allowed Users Only"}
+          ]
+        },
+        {
+          "field_name": "allowed_users",
+          "label": "Allowed Users",
+          "preset": "tag_string_autocomplete"
+        }
+      ]
+    }
 
-     . /usr/lib/ckan/default/bin/activate
 
-2. Install the ckanext-restricted Python package into your virtual environment::
+reCAPTCHA Configuration
+~~~~~~~~~~~~~~~~~~~~~~~
 
-     pip install ckanext-restricted
+Add the following to your CKAN config file:
 
-3. Add ``restricted`` to the ``ckan.plugins`` setting in your CKAN
-   config file (by default the config file is located at
-   ``/etc/ckan/default/production.ini``).
+.. code-block:: ini
 
-4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu::
-
-     sudo service apache2 reload
+    ckan.recaptcha.version = 2
+    ckan.recaptcha.privatekey = YOUR_PRIVATE_KEY
+    ckan.recaptcha.publickey = YOUR_PUBLIC_KEY
 
 
+Installation
+------------
 
-### Config Settings
+1. Activate your CKAN virtual environment:
+
+.. code-block:: bash
+
+    . /usr/lib/ckan/default/bin/activate
+
+2. Install the extension:
+
+.. code-block:: bash
+
+    pip install ckanext-restricted
+
+3. Add ``restricted`` to ``ckan.plugins`` in your CKAN config file.
+
+4. Restart CKAN.
 
 
-Only the scheming configuration is needed (JSON file defining your schema).
+Config Settings
+---------------
+
+Only the Scheming configuration (JSON/YAML schema) is required.
 
 
-### Development Installation
+Development Installation
+------------------------
 
-
-To install ckanext-restricted for development, activate your CKAN virtualenv and
-do::
+.. code-block:: bash
 
     git clone https://github.com/espona/ckanext-restricted.git
     cd ckanext-restricted
@@ -215,71 +178,65 @@ do::
     pip install -r dev-requirements.txt
 
 
+Running the Tests
+-----------------
 
-### Running the Tests
+Run tests:
 
-
-To run the tests, do::
+.. code-block:: bash
 
     nosetests --nologcapture --with-pylons=test.ini
 
-To run the tests and produce a coverage report, first make sure you have
-coverage installed in your virtualenv (``pip install coverage``) then run::
+Run tests with coverage:
 
-    nosetests --nologcapture --with-pylons=test.ini --with-coverage --cover-package=ckanext.restricted --cover-inclusive --cover-erase --cover-tests
+.. code-block:: bash
 
-
-
-### Registering ckanext-restricted on PyPI
-
-
-ckanext-restricted should be available on PyPI as
-https://pypi.python.org/pypi/ckanext-restricted. If that link doesn't work, then
-you can register the project on PyPI for the first time by following these
-steps:
-
-1. Create a source distribution of the project::
-
-     python setup.py sdist
-
-2. Register the project::
-
-     python setup.py register
-
-3. Upload the source distribution to PyPI::
-
-     python setup.py sdist upload
-
-4. Tag the first release of the project on GitHub with the version number from
-   the ``setup.py`` file. For example if the version number in ``setup.py`` is
-   0.0.1 then do::
-
-       git tag 0.0.1
-       git push --tags
+    nosetests --nologcapture --with-pylons=test.ini \
+      --with-coverage --cover-package=ckanext.restricted \
+      --cover-inclusive --cover-erase --cover-tests
 
 
+Registering on PyPI
+-------------------
 
-### Releasing a New Version of ckanext-restricted
+Create distribution:
+
+.. code-block:: bash
+
+    python setup.py sdist
+
+Register:
+
+.. code-block:: bash
+
+    python setup.py register
+
+Upload:
+
+.. code-block:: bash
+
+    python setup.py sdist upload
 
 
-ckanext-restricted is available on PyPI as https://pypi.python.org/pypi/ckanext-restricted.
-To publish a new version to PyPI follow these steps:
+Releasing a New Version
+-----------------------
 
-1. Update the version number in the ``setup.py`` file.
-   See `PEP 440 <http://legacy.python.org/dev/peps/pep-0440/#public-version-identifiers>`_
-   for how to choose version numbers.
+1. Update version in ``setup.py``.
+2. Build distribution:
 
-2. Create a source distribution of the new version::
+.. code-block:: bash
 
-     python setup.py sdist
+    python setup.py sdist
 
-3. Upload the source distribution to PyPI::
+3. Upload:
 
-     python setup.py sdist upload
+.. code-block:: bash
 
-4. Tag the new release of the project on GitHub with the version number from
-   the ``setup.py`` file. For example if the version number in ``setup.py`` is
-   0.0.2 then do::
+    python setup.py sdist upload
 
-       git tag 0.0.2
-       git push --tags
+4. Tag release:
+
+.. code-block:: bash
+
+    git tag 0.0.2
+    git push --tags
