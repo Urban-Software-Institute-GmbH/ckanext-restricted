@@ -33,14 +33,12 @@ class RestrictedPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
     # IConfigurer
     def update_config(self, config_):
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 plugin.update_config called")
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'restricted')
 
     # IActions
     def get_actions(self):
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 plugin.get_actions called")
         return {'user_create': action.restricted_user_create_and_notify,
                 'resource_view_list': action.restricted_resource_view_list,
                 'package_show': action.restricted_package_show,
@@ -54,7 +52,6 @@ class RestrictedPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
     # IAuthFunctions
     def get_auth_functions(self):
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 plugin.get_auth_functions called")
         return {'resource_show': auth.restricted_resource_show,
                 'resource_view_show': auth.restricted_resource_show}
 
@@ -78,7 +75,6 @@ class RestrictedPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
     # IBlueprint
     def get_blueprint(self):
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 plugin.get_blueprint called")
         return blueprints.get_blueprints(self.name, self.__module__)
 
     # IValidators

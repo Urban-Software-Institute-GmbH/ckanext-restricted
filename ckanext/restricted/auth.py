@@ -33,18 +33,9 @@ def restricted_resource_show(context, data_dict=None):
         package = model.Package.get(resource.get('package_id'))
         package = package.as_dict()
 
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 AUTH CALLED user=%r data_dict=%r",
-         context.get("user"), data_dict)
-
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 resource_id=%s package_id=%s",
-         resource.get("id"), resource.get("package_id"))
-
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 derived user_name=%r", user_name)
 
     result = logic.restricted_check_user_resource_access(
     user_name, resource, package)
-
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACCESS RESULT=%r", result)
 
     return result
   

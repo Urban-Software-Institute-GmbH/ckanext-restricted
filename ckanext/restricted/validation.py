@@ -42,11 +42,6 @@ def restricted_username_from_mail(field, schema):
                     new_allowed_users += [new_name]
             restricted_data['allowed_users'] = ','.join(new_allowed_users)
             data[key] = json.dumps(restricted_data)
-    logger.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 VALIDATOR raw restricted=%r",
-            data.get(key))
-
-    logger.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 VALIDATOR normalized allowed_users=%r",
-            restricted_data.get("allowed_users"))
     return validator
 
 def _restricted_user_search(querystr):
