@@ -1,18 +1,18 @@
 ## Table of Contents
 
-1. [Forking Explained](#1-forking-explained)
-2. [ckanext-restricted](#2-ckanext-restricted)
-3. [Requirements](#3-requirements)
-4. [Installation](#4-installation)
-5. [Config Settings](#5-config-settings)
-6. [Development Installation](#6-development-installation)
-7. [Running the Tests](#7-running-the-tests)
-8. [Registering ckanext-restricted on PyPI](#8-registering-ckanext-restricted-on-pypi)
-9. [Releasing a New Version of ckanext-restricted](#9-releasing-a-new-version-of-ckanext-restricted)
+1. [Forking Explained](#forking-explained)
+2. [ckanext-restricted](#ckanext-restricted)
+3. [Requirements](#requirements)
+4. [Installation](#installation)
+5. [Config Settings](#config-settings)
+6. [Development Installation](#development-installation)
+7. [Running the Tests](#running-the-tests)
+8. [Registering ckanext-restricted on PyPI](#registering-ckanext-restricted-on-pypi)
+9. [Releasing a New Version of ckanext-restricted](#releasing-a-new-version-of-ckanext-restricted)
 
 
 
-### 1. Forking Explained
+### Forking Explained
 
 This plugin was forked in order to adapt the code to work with the YAML schema we are using. In the original implementation, the plugin expects:
 
@@ -45,7 +45,7 @@ So we adapted the plugin to fit our restricted schema.
 Our schema: https://github.com/Urban-Software-Institute-GmbH/ckanext-restricted/blob/master/schemas/ckan_dataset.yaml
 
 
-### 2. ckanext-restricted
+### ckanext-restricted
 
 CKAN extension to restrict the accessibility to the resources of a dataset.
 This way the package metadata is accessible but not the data itself (resource).
@@ -83,7 +83,7 @@ restricted_resources_preview.PNG
     Request form for restricted resources
 
 
-### 3. Requirements
+### Requirements
 
 
 This extension has been originally developed for CKAN version 2.5.2 and is compatible up to 2.11.x.
@@ -170,7 +170,7 @@ The for mail notifications, the mail_to and smtp options in the ini file have to
 - http://docs.ckan.org/en/latest/maintaining/email-notifications.html
 
  
-### 4. Installation
+### Installation
 
 
 .. Add any additional install steps to the list below.
@@ -197,13 +197,13 @@ To install ckanext-restricted:
 
 
 
-### 5. Config Settings
+### Config Settings
 
 
 Only the scheming configuration is needed (JSON file defining your schema).
 
 
-### 6. Development Installation
+### Development Installation
 
 
 To install ckanext-restricted for development, activate your CKAN virtualenv and
@@ -216,7 +216,7 @@ do::
 
 
 
-### 7. Running the Tests
+### Running the Tests
 
 
 To run the tests, do::
@@ -230,7 +230,7 @@ coverage installed in your virtualenv (``pip install coverage``) then run::
 
 
 
-### 8. Registering ckanext-restricted on PyPI
+### Registering ckanext-restricted on PyPI
 
 
 ckanext-restricted should be available on PyPI as
@@ -259,7 +259,7 @@ steps:
 
 
 
-### 9. Releasing a New Version of ckanext-restricted
+### Releasing a New Version of ckanext-restricted
 
 
 ckanext-restricted is available on PyPI as https://pypi.python.org/pypi/ckanext-restricted.
