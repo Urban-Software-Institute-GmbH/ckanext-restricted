@@ -1,17 +1,15 @@
 ## Table of Contents
-1. [Forking explained](#1-forking-explained)
-2. [ckanext-restricted](#2-introduction)
+
+1. [Forking Explained](#1-forking-explained)
+2. [ckanext-restricted](#2-ckanext-restricted)
 3. [Requirements](#3-requirements)
 4. [Installation](#4-installation)
 5. [Config Settings](#5-config-settings)
 6. [Development Installation](#6-development-installation)
 7. [Running the Tests](#7-running-the-tests)
-8. [Registering ckanext-restricted on PyPI](#8-registering-ckanext-restricted-on-pyPI)
+8. [Registering ckanext-restricted on PyPI](#8-registering-ckanext-restricted-on-pypi)
+9. [Releasing a New Version of ckanext-restricted](#9-releasing-a-new-version-of-ckanext-restricted)
 
-
-.. You should enable this project on travis-ci.org and coveralls.io to make
-   these badges work. The necessary Travis and Coverage config files have been
-   generated for you.
 
 
 ### 1. Forking Explained
@@ -52,11 +50,6 @@ Our schema: https://github.com/Urban-Software-Institute-GmbH/ckanext-restricted/
 
 
 ### 2. ckanext-restricted
-
-
-.. Put a description of your extension here:
-   What does it do? What features does it have?
-   Consider including some screenshots or embedding a video!
 
 CKAN extension to restrict the accessibility to the resources of a dataset.
 This way the package metadata is accessible but not the data itself (resource).
