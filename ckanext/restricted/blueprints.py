@@ -116,18 +116,19 @@ def restricted_request_access_form(package_id, resource_id, data=None, errors=No
 def _send_request_mail(data):
     success = False
     try:
-
         resource_link = toolkit.url_for(
             action='read',
             controller='dataset_resource',
             id=data.get('package_name'),
-            resource_id=data.get('resource_id'))
+            resource_id=data.get('resource_id')
+        )
 
         resource_edit_link = toolkit.url_for(
             action='edit',
             controller='dataset_resource',
             id=data.get('package_name'),
-            resource_id=data.get('resource_id'))
+            resource_id=data.get('resource_id')
+        )
 
         extra_vars = {
             'site_title': config.get('ckan.site_title'),
@@ -139,47 +140,103 @@ def _send_request_mail(data):
             'resource_name': data.get('resource_name', ''),
             'resource_link': config.get('ckan.site_url') + resource_link,
             'resource_edit_link': config.get('ckan.site_url') + resource_edit_link,
-            'package_name': data.get('resource_name', ''),
+            # FIX: this was resource_name in your code, but should be package_name
+            'package_name': data.get('package_name', ''),
             'message': data.get('message', ''),
-            'admin_email_to': config.get('email_to', 'email_to_undefined')}
+            # CKAN admin email (may be undefined / empty)
+            'admin_email_to': config.get('email_to', 'email_to_undefined')
+        }
 
         mail_template = 'restricted/emails/restricted_access_request.txt'
         body = render(mail_template, extra_vars)
 
-        subject = \
-            _('Access Request to resource {0} ({1}) from {2}').format(
-                data.get('resource_name', ''),
-                data.get('package_name', ''),
-                data.get('user_name', ''))
+        subject = _(
+            'Access Request to resource {0} ({1}) from {2}'
+        ).format(
+            data.get('resource_name', ''),
+            data.get('package_name', ''),
+            data.get('user_name', '')
+        )
+
+        def _valid_email(addr: str) -> bool:
+            addr = (addr or '').strip()
+            if not addr:
+                return False
+            if addr.lower() in ('email_to_undefined', 'undefined', 'none', 'null'):
+                return False
+            if ' ' in addr:
+                return False
+            if '@' not in addr:
+                return False
+            return True
+
+        # Build recipients: maintainer (or fallback already computed) + admin
+        maintainer_email = (data.get('maintainer_email') or '').strip()
+        admin_email_to = (extra_vars.get('admin_email_to') or '').strip()
 
         email_dict = {
-            data.get('maintainer_email'): extra_vars.get('maintainer_name'),
-            extra_vars.get('admin_email_to'): '{} Admin'.format(extra_vars.get('site_title'))}
+            maintainer_email: extra_vars.get('maintainer_name', 'Maintainer'),
+            admin_email_to: '{} Admin'.format(extra_vars.get('site_title') or 'CKAN')
+        }
+
+        # Filter invalid + de-duplicate recipients while preserving order
+        seen = set()
+        recipients = []
+        for email, name in email_dict.items():
+            if not _valid_email(email):
+                log.warning("Skipping invalid recipient email: %r", email)
+                continue
+            if email in seen:
+                continue
+            seen.add(email)
+            recipients.append((email, name))
+
+        # Build headers (clean CC list)
+        cc_list = [email for (email, _name) in recipients]
+        reply_to = (data.get('user_email') or '').strip()
 
         headers = {
-            'CC': ",".join(email_dict.keys()),
-            'reply-to': data.get('user_email')}
+            'CC': ",".join(cc_list),
+            'reply-to': reply_to
+        }
 
-        # CC doesn't work and mailer cannot send to multiple addresses
-        for email, name in email_dict.items():
-            mailer.mail_recipient(recipient_name=name, recipient_email=email, subject='Fwd: ' + subject, body=body,
-                                  body_html=None, headers=headers)
+        # Send one mail per recipient (CKAN mailer often sends one recipient at a time)
+        for email, name in recipients:
+            mailer.mail_recipient(
+                recipient_name=name,
+                recipient_email=email,
+                subject='Fwd: ' + subject,
+                body=body,
+                body_html=None,
+                headers=headers
+            )
 
         # Special copy for the user (no links)
-        email = data.get('user_email')
-        name = data.get('user_name', 'User')
+        user_email = (data.get('user_email') or '').strip()
+        user_name = data.get('user_name', 'User')
 
-        extra_vars['resource_link'] = '[...]'
-        extra_vars['resource_edit_link'] = '[...]'
-        body = render('restricted/emails/restricted_access_request.txt', extra_vars)
+        if _valid_email(user_email):
+            extra_vars_user = dict(extra_vars)
+            extra_vars_user['resource_link'] = '[...]'
+            extra_vars_user['resource_edit_link'] = '[...]'
+            body_user_full = render(mail_template, extra_vars_user)
 
-        body_user = _(
-            'Please find below a copy of the access '
-            'request mail sent. \n\n >> {}'
-        ).format(body.replace("\n", "\n >> "))
+            body_user = _(
+                'Please find below a copy of the access '
+                'request mail sent. \n\n >> {}'
+            ).format(body_user_full.replace("\n", "\n >> "))
 
-        mailer.mail_recipient(recipient_name=name, recipient_email=email, subject='Fwd: ' + subject, body=body_user,
-                              body_html=None, headers=headers)
+            mailer.mail_recipient(
+                recipient_name=user_name,
+                recipient_email=user_email,
+                subject='Fwd: ' + subject,
+                body=body_user,
+                body_html=None,
+                headers=headers
+            )
+        else:
+            log.warning("Skipping user copy email because user_email is invalid: %r", user_email)
+
         success = True
 
     except mailer.MailerException as mailer_exception:
