@@ -73,6 +73,15 @@ dataset_fields:
     en: Other information
   output_validators: ignore_missing
 
+- field_name: other
+  label:
+    en: Other information
+  output_validators: ignore_missing
+
+- field_name: other
+  label:
+    en: Other information
+  output_validators: ignore_missing
 
 
 resource_fields:
