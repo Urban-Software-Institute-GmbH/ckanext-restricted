@@ -24,25 +24,21 @@ This plugin was forked in order to adapt the code to work with the YAML schema w
   }
 }
 
-
-
 or:
-```
+
 {
   "extras": {
     "restricted": "{\"level\":\"only_allowed_users\",\"allowed_users\":\"ckanuser7\"}"
   }
 }
 
-```
-
 But our Scheming YAML schema was actually saving it as:
-```
+
 {
   "restricted-level": "only_allowed_users",
   "restricted-allowed_users": "ckanuser7"
 }
-```
+
 
 So we adapted the plugin to fit our restricted schema.
 
