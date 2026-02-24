@@ -114,15 +114,15 @@ resource_fields:
       help_text: "⚠ Hinweis: Wenn 'Only allowed users' ausgewählt ist, muss die E-Mail des Verantwortlichen im Dataset gesetzt sein!.⚠"
       choices:
         - value: public
-          label: Public
+          label: Öffentlich
         - value: registered
-          label: Registered users
+          label: Angemeldete Nutzer
         - value: only_allowed_users
-          label: Only allowed users
+          label: Nur ausgewählte Nutzer (Nutzer unten auswählen)
         - value: any_organization
-          label: Any organization member
+          label: Mitglieder irgendeiner Organisation
         - value: same_organization
-          label: Same organization member
+          label: Mitglieder derselben Organisation
 
     - field_name: allowed_users
       label: Allowed Users
