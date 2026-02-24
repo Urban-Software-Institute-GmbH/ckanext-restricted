@@ -33,52 +33,22 @@ def restricted_get_username_from_context(context):
 
 
 def restricted_get_restricted_dict(resource_dict):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ENTER restricted_get_restricted_dict")
-
     restricted_dict = {'level': 'public', 'allowed_users': []}
 
     if not resource_dict:
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 resource_dict is empty -> default public")
         return restricted_dict
 
     extras = resource_dict.get('extras', {}) or {}
-
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW keys=%r",
-        list(resource_dict.keys())
-    )
-
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted=%r",
-        resource_dict.get('restricted')
-    )
-
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW extras.restricted=%r",
-        extras.get('restricted')
-    )
-
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted-level=%r",
-        resource_dict.get('restricted-level')
-    )
-
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RAW restricted-allowed_users=%r",
-        resource_dict.get('restricted-allowed_users')
-    )
 
     # Try structured restricted first
     restricted = resource_dict.get('restricted', extras.get('restricted'))
 
     if restricted:
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 FOUND structured restricted")
         if not isinstance(restricted, dict):
             try:
                 restricted = json.loads(restricted)
-                log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 JSON parsed restricted=%r", restricted)
             except Exception:
-                log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 JSON parse failed")
+                log.error("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 JSON parse failed")
                 restricted = {}
 
         if isinstance(restricted, dict):
@@ -86,7 +56,6 @@ def restricted_get_restricted_dict(resource_dict):
             allowed = restricted.get('allowed_users', '')
             allowed_list = [u.strip() for u in str(allowed).split(',') if u.strip()]
             result = {'level': level, 'allowed_users': allowed_list}
-            log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RETURN structured=%r", result)
             return result
 
     # Try flattened fields
@@ -94,13 +63,9 @@ def restricted_get_restricted_dict(resource_dict):
     flat_users = resource_dict.get('restricted-allowed_users') or extras.get('restricted-allowed_users')
 
     if flat_level or flat_users:
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 FOUND flattened restricted")
         allowed_list = [u.strip() for u in str(flat_users or '').split(',') if u.strip()]
         result = {'level': flat_level or 'public', 'allowed_users': allowed_list}
-        log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RETURN flattened=%r", result)
         return result
-
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 RETURN default public")
     return restricted_dict
 
 

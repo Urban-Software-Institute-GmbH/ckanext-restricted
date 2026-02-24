@@ -67,8 +67,6 @@ def restricted_user_create_and_notify(context, data_dict):
 
 @side_effect_free
 def restricted_resource_view_list(context, data_dict):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACTION restricted_package_show user=%r id=%r",
-         context.get("user"), data_dict.get("id"))
     model = context['model']
     id = _get_or_bust(data_dict, 'id')
     resource = model.Resource.get(id)
@@ -84,8 +82,6 @@ def restricted_resource_view_list(context, data_dict):
 
 @side_effect_free
 def restricted_package_show(context, data_dict):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACTION restricted_package_show user=%r id=%r",
-         context.get("user"), data_dict.get("id"))
     package_metadata = package_show(context, data_dict)
 
     # Ensure user who can edit can see the resource
@@ -109,8 +105,6 @@ def restricted_package_show(context, data_dict):
 
 @side_effect_free
 def restricted_resource_search(context, data_dict):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACTION restricted_package_show user=%r id=%r",
-         context.get("user"), data_dict.get("id"))
     resource_search_result = resource_search(context, data_dict)
 
     restricted_resource_search_result = {}
@@ -129,8 +123,6 @@ def restricted_resource_search(context, data_dict):
 
 @side_effect_free
 def restricted_package_search(context, data_dict):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACTION restricted_package_show user=%r id=%r",
-         context.get("user"), data_dict.get("id"))
     package_search_result = package_search(context, data_dict)
 
     restricted_package_search_result = {}
@@ -157,8 +149,6 @@ def restricted_package_search(context, data_dict):
 
 @side_effect_free
 def restricted_check_access(context, data_dict):
-    log.info("🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 ACTION restricted_package_show user=%r id=%r",
-         context.get("user"), data_dict.get("id"))
     package_id = data_dict.get('package_id', False)
     resource_id = data_dict.get('resource_id', False)
 
@@ -190,11 +180,6 @@ def restricted_check_access(context, data_dict):
 #     return restricted_resources_list
 
 def _restricted_resource_list_hide_fields(context, resource_list):
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS START user=%r resources_count=%d",
-        context.get("user"),
-        len(resource_list),
-    )
 
     restricted_resources_list = []
 
@@ -202,30 +187,13 @@ def _restricted_resource_list_hide_fields(context, resource_list):
         # copy original resource
         restricted_resource = dict(resource)
 
-        log.info(
-            "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS LOOP resource_id=%r package_id=%r",
-            restricted_resource.get("id"),
-            restricted_resource.get("package_id"),
-        )
-
         # get the restricted fields (this now supports structured + flattened)
         restricted_dict = logic.restricted_get_restricted_dict(restricted_resource)
-
-        log.info(
-            "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS restricted_dict=%r",
-            restricted_dict,
-        )
 
         # check authorization
         authorized = auth.restricted_resource_show(
             context, {'id': resource.get('id'), 'resource': resource}
         ).get('success', False)
-
-        log.info(
-            "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS authorized=%r resource_id=%r",
-            authorized,
-            restricted_resource.get("id"),
-        )
 
         # hide other fields in restricted to everyone but dataset owner(s)
         if not authz.is_authorized(
@@ -257,10 +225,5 @@ def _restricted_resource_list_hide_fields(context, resource_list):
                 restricted_resource['restricted'] = new_restricted
 
         restricted_resources_list.append(restricted_resource)
-
-    log.info(
-        "🔴🔴🔴RESTRICTED_DEBUG🔴🔴🔴 HIDE_FIELDS END returned_count=%d",
-        len(restricted_resources_list),
-    )
 
     return restricted_resources_list

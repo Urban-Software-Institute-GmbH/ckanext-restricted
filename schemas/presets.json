@@ -1,0 +1,103 @@
+{
+  "scheming_presets_version": 1,
+  "about": "these are the default scheming field presets",
+  "about_url": "http://github.com/ckan/ckanext-scheming#preset",
+  "presets": [
+    {
+      "preset_name": "title",
+      "values": {
+        "validators": "if_empty_same_as(name) unicode_safe",
+        "form_snippet": "large_text.html",
+        "form_attrs": {
+          "data-module": "slug-preview-target"
+        }
+      }
+    },
+    {
+      "preset_name": "dataset_slug",
+      "values": {
+        "validators": "not_empty unicode_safe name_validator package_name_validator",
+        "form_snippet": "slug.html"
+      }
+    },
+    {
+      "preset_name": "tag_string_autocomplete",
+      "values": {
+        "validators": "ignore_missing tag_string_convert",
+        "classes": ["control-full"],
+        "form_attrs": {
+          "data-module": "autocomplete",
+          "data-module-tags": "",
+          "data-module-source": "/api/2/util/tag/autocomplete?incomplete=?",
+          "class": ""
+        }
+      }
+    },
+    {
+      "preset_name": "dataset_organization",
+      "values": {
+        "validators": "owner_org_validator unicode_safe",
+        "form_snippet": "organization.html"
+      }
+    },
+    {
+      "preset_name": "resource_url_upload",
+      "values": {
+        "validators": "ignore_missing unicode_safe remove_whitespace",
+        "form_snippet": "upload.html",
+        "form_placeholder": "http://example.com/my-data.csv",
+        "upload_field": "upload",
+        "upload_clear": "clear_upload",
+        "upload_label": "File"
+      }
+    },
+    {
+      "preset_name": "resource_format_autocomplete",
+      "values": {
+        "validators": "if_empty_guess_format ignore_missing clean_format unicode_safe",
+        "form_placeholder": "eg. CSV, XML or JSON",
+        "form_attrs": {
+          "data-module": "autocomplete",
+          "data-module-source": "/api/2/util/resource/format_autocomplete?incomplete=?"
+        }
+      }
+    },
+    {
+      "preset_name": "select",
+      "values": {
+        "form_snippet": "select.html",
+        "display_snippet": "select.html",
+        "validators": "scheming_required scheming_choices"
+      }
+    },
+
+    {
+      "preset_name": "composite",
+      "values": {
+        "validators": "ignore_missing",
+        "form_snippet": "composite.html",
+        "display_snippet": "composite.html"
+      }
+    },
+
+    {
+      "preset_name": "text",
+      "values": {
+        "validators": "ignore_missing unicode_safe",
+        "form_snippet": "text.html",
+        "display_snippet": "text.html"
+      }
+    },
+    {
+      "preset_name": "user_autocomplete",
+      "values": {
+        "validators": "ignore_missing unicode_safe",
+        "form_snippet": "text.html",
+        "form_attrs": {
+          "data-module": "autocomplete",
+          "data-module-source": "/api/2/util/user/autocomplete?q=?"
+        }
+      }
+    }
+  ]
+}
