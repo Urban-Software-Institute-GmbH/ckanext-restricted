@@ -12,7 +12,9 @@ ckanext-restricted
 Forking Explained
 -----------------
 
-This plugin was forked in order to adapt the code to work with the YAML schema we are using.
+This plugin was forked for two reasons:
+
+The main reason is to adapt the code to work with the YAML schema we are using.
 
 In the original implementation, the plugin expects the restriction data to be saved like this:
 
@@ -48,6 +50,14 @@ Therefore, we adapted the plugin to fit our restricted schema.
 
 Our schema:
 https://github.com/Urban-Software-Institute-GmbH/ckanext-restricted/blob/master/schemas/ckan_dataset.yaml
+
+The second issue was a 400 Bad Request (The CSRF token is missing) error that occurred after submitting the dataset access request form (as shown in the image below). To resolve this, we had to include {{ h.csrf_input() }} inside the form located at: ckanext/restricted/templates/restricted/restricted_request_access_form.html
+
+Starting from CKAN version 2.10, built-in Cross-Site Request Forgery (CSRF) protection is enabled for all frontend forms. CKAN uses CSRF tokens to prevent security attacks. However, the CSRF token was missing in our custom form template, so we had to add it manually.
+
+.. image:: csrf-token-missing.png
+   :alt: 400 Bad Request – CSRF token is missing
+   :align: center
 
 
 ckanext-restricted
