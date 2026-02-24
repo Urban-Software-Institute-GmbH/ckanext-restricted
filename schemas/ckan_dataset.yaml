@@ -111,7 +111,7 @@ resource_fields:
       label: Restriction Level
       preset: select
       form_include_blank_choice: false
-      help_text: "⚠ Hinweis: Wenn 'Only allowed users' ausgewählt ist, muss die E-Mail des Verantwortlichen im Dataset gesetzt sein!.⚠"
+      help_text: "⚠ Hinweis: Wenn 'Nur ausgewählte Nutzer' ausgewählt ist, muss die E-Mail des Verantwortlichen im Dataset gesetzt sein!.⚠"
       choices:
         - value: public
           label: Öffentlich
